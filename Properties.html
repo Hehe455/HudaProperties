@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Properties</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* Similar styles as index.html */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            position: relative;
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #fff;
+            color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background-color: #f1f1f1;
+        }
+
+        .container {
+            padding: 1rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 400px;
+            margin: 1rem auto;
+            display: flex;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .search-bar input {
+            flex: 1;
+            border: none;
+            padding: 0.8rem;
+        }
+
+        .search-bar button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 0.8rem 1rem;
+            cursor: pointer;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .grid-item {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 0.8rem;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .grid-item button {
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .edit-btn {
+            background-color: #FFC107;
+            color: #fff;
+        }
+
+        .delete-btn {
+            background-color: #FF4D4D;
+            color: #fff;
+        }
+
+        .add-btn {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup.active {
+            display: flex;
+        }
+
+        .popup-content {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .popup-content input,
+        .popup-content button {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .popup-content button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .popup-content button.cancel-btn {
+            background-color: #FF4D4D;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="back-btn" onclick="window.location.href='index.html';">Back</button>
+        Properties in <span id="locality-name"></span>
+    </header>
+    <div class="container">
+        <div class="search-bar">
+            <input type="text" id="search" placeholder="Search properties...">
+            <button onclick="searchItems()">Search</button>
+        </div>
+        <div class="grid" id="grid">
+            <!-- Properties dynamically populated -->
+        </div>
+    </div>
+    <button class="add-btn" onclick="togglePopup()">+</button>
+
+    <div class="popup" id="popup">
+        <div class="popup-content">
+            <input type="text" id="property-name" placeholder="Property Name">
+            <input type="number" id="property-price" placeholder="Price per gaj">
+            <input type="number" id="property-total" placeholder="Total Price">
+            <input type="number" id="property-size" placeholder="Size (gaj)">
+            <textarea id="property-remarks" placeholder="Remarks"></textarea>
+            <button onclick="addProperty()">Add Property</button>
+            <button class="cancel-btn" onclick="togglePopup()">Cancel</button>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.3.2/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDU1AQULSP_-GHlv4hAjgf8dnlcQ_xd4mc",
+            authDomain: "e-ride-b2928.firebaseapp.com",
+            projectId: "e-ride-b2928",
+            storageBucket: "e-ride-b2928.appspot.com",
+            messagingSenderId: "766360236907",
+            appId: "1:766360236907:web:a17ba4bc96703ead22922e"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        const params = new URLSearchParams(window.location.search);
+        const locality = params.get('locality');
+        document.getElementById('locality-name').textContent = locality;
+
+        function togglePopup() {
+            document.getElementById('popup').classList.toggle('active');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function fetchProperties() {
+            const grid = document.getElementById('grid');
+            db.collection('properties')
+                .where('locality', '==', locality)
+                .get()
+                .then(snapshot => {
+                    grid.innerHTML = '';
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'grid-item';
+                        item.innerHTML = `
+                            <strong>${data.name}</strong><br>
+                            Price: ${data.price}/gaj<br>
+                            Total: ${data.total}<br>
+                            Size: ${data.size} gaj<br>
+                            ${data.remarks}<br>
+                            <button class="edit-btn" onclick="editProperty('${doc.id}', '${data.name}', ${data.price}, ${data.total}, ${data.size}, '${data.remarks}')">Edit</button>
+                            <button class="delete-btn" onclick="deleteProperty('${doc.id}')">Delete</button>
+                        `;
+                        grid.appendChild(item);
+                    });
+                }).catch(() => showToast('Failed to load properties.'));
+        }
+
+        function addProperty() {
+            const name = document.getElementById('property-name').value.trim();
+            const price = parseInt(document.getElementById('property-price').value, 10);
+            const total = parseInt(document.getElementById('property-total').value, 10);
+            const size = parseInt(document.getElementById('property-size').value, 10);
+            const remarks = document.getElementById('property-remarks').value.trim();
+
+            if (!name || !price || !total || !size) {
+                return showToast('Fill all fields!');
+            }
+
+            db.collection('properties').add({
+                locality,
+                name,
+                price,
+                total,
+                size,
+                remarks
+            }).then(() => {
+                togglePopup();
+                showToast('Property added!');
+                fetchProperties();
+            });
+        }
+
+        function editProperty(id, name, price, total, size, remarks) {
+            document.getElementById('property-name').value = name;
+            document.getElementById('property-price').value = price;
+            document.getElementById('property-total').value = total;
+            document.getElementById('property-size').value = size;
+            document.getElementById('property-remarks').value = remarks;
+            togglePopup();
+
+            document.querySelector('.popup-content button:not(.cancel-btn)').onclick = () => {
+                db.collection('properties').doc(id).update({
+                    name: document.getElementById('property-name').value.trim(),
+                    price: parseInt(document.getElementById('property-price').value, 10),
+                    total: parseInt(document.getElementById('property-total').value, 10),
+                    size: parseInt(document.getElementById('property-size').value, 10),
+                    remarks: document.getElementById('property-remarks').value.trim(),
+                }).then(() => {
+                    togglePopup();
+                    showToast('Property updated!');
+                    fetchProperties();
+                });
+            };
+        }
+
+        function deleteProperty(id) {
+            db.collection('properties').doc(id).delete().then(() => {
+                showToast('Property deleted!');
+                fetchProperties();
+            });
+        }
+
+        fetchProperties();
+    </script>
+</body>
+</html>
